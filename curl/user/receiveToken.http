@@ -1,0 +1,4 @@
+GET /api/trpc/user.receiveToken?batch=1&input={"0": {"json": {"sessionToken": "a2d669ba-46cc-491c-9965-7144a9b766cb"}}}
+Host: localhost:3000
+
+{}

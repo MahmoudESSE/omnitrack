@@ -1,0 +1,4 @@
+GET /api/trpc/user.hello
+Host: localhost:3000
+
+{}
