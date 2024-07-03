@@ -44,7 +44,7 @@ export const groupsRouter = createTRPCRouter({
           member_email: userEmail,
         });
         await ctx.db.insert(members).values({
-          groupId: insertedGroups[0].insertedId!,
+          groupId: insertedGroups[0].insertedId,
           member_email: input.email,
         });
         return;
