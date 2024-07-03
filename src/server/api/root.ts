@@ -6,6 +6,7 @@ import { exampleRouter } from "./routers/example";
 import { mapRouter } from "./routers/map";
 import { analyticsRouter } from "./routers/analytics";
 import { userRouter } from "./routers/user";
+import { groupsRouter } from "./routers/groups";
 
 /**
  * This is the primary router for your server.
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   map: mapRouter,
   segment: analyticsRouter,
   user: userRouter,
+  group: groupsRouter,
 });
 
 // export type definition of API

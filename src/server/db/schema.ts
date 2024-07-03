@@ -12,6 +12,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
+import { createTables } from "node_modules/@auth/drizzle-adapter/lib/pg";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -162,5 +163,21 @@ export const verificationTokens = createTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  }),
+);
+
+export const groups = createTable("group", {
+  id: serial("id").primaryKey(),
+  ownerId: varchar("owner_id", { length: 255 }).notNull(),
+});
+
+export const members = createTable(
+  "member",
+  {
+    groupId: integer("group_id").notNull(),
+    member_email: varchar("member_email", { length: 255 }).notNull(),
+  },
+  (m) => ({
+    groupMembership: primaryKey({ columns: [m.groupId, m.member_email] }),
   }),
 );

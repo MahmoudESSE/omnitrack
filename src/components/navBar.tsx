@@ -179,6 +179,13 @@ const NavBar = () => {
                 {sessionData?.user.name ?? "My Account"}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+
+              <Link
+                href="/group"
+                className="text-foreground transition-colors hover:text-foreground"
+              >
+                <DropdownMenuItem>Group</DropdownMenuItem>
+              </Link>
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
