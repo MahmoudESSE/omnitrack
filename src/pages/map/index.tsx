@@ -63,7 +63,9 @@ const Home = () => {
                     mapStyle={map.mapStyle}
                     style={{ width: 400, height: 300 }}
                   >
-                    {trackers?.map((tracker) => <TrackerMapPin {...tracker} />)}
+                    {trackers?.map((tracker) => (
+                      <TrackerMapPin key={tracker.id} {...tracker} />
+                    ))}
                   </Map>
                 )}
               </DeckGl>

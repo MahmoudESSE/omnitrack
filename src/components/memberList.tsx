@@ -23,7 +23,7 @@ const MemberList = () => {
       </CardHeader>
       <CardContent className="grid gap-8">
         {groupMembers.map((groupMember) => (
-          <div className="flex items-center gap-4">
+          <div key={groupMember.groupId} className="flex items-center gap-4">
             <div className="grid gap-1">
               <p className="text-sm font-medium leading-none">
                 {groupMember.member_email}
