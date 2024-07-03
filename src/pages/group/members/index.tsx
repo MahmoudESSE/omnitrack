@@ -37,8 +37,8 @@ const MemberForm = () => {
     resolver: zodResolver(MemberSchema),
   });
 
-  const onSubmit: SubmitHandler<MemberType> = (input) => {
-    createMember(input);
+  const onSubmit: SubmitHandler<MemberType> = async (input) => {
+    await createMember(input);
   };
 
   return (
