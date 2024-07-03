@@ -33,19 +33,32 @@ export const groupsRouter = createTRPCRouter({
           .returning({ insertedId: groups.id });
         console.log(insertedGroups);
 
+        if (!insertedGroups?.[0] || !userEmail) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
+
         await ctx.db.insert(members).values({
-          groupId: insertedGroups[0]?.insertedId!,
-          member_email: userEmail!,
+          groupId: insertedGroups[0].insertedId,
+          member_email: userEmail,
         });
         await ctx.db.insert(members).values({
-          groupId: insertedGroups[0]?.insertedId!,
+          groupId: insertedGroups[0].insertedId!,
           member_email: input.email,
         });
-      } else {
-        await ctx.db
-          .insert(members)
-          .values({ groupId: res[0]?.group!, member_email: input.email });
+        return;
       }
+
+      if (!res?.[0]?.group) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+
+      await ctx.db
+        .insert(members)
+        .values({ groupId: res[0].group, member_email: input.email });
     }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
