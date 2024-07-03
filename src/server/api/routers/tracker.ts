@@ -68,4 +68,16 @@ export const trackerRouter = createTRPCRouter({
       orderBy: (trackers, { desc }) => [desc(trackers.createdAt)],
     });
   }),
+
+  searchFor: protectedProcedure
+    .input(
+      z.object({
+        tracker: TrackerSchema,
+      }),
+    )
+    .query(({ ctx, input }) => {
+      return ctx.db.query.trackers.findFirst({
+        where: (tracker, { eq }) => eq(tracker.imei, input.tracker.imei),
+      });
+    }),
 });
