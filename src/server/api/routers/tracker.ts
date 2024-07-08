@@ -23,6 +23,15 @@ export const trackerRouter = createTRPCRouter({
     return "you can now see this secret message!";
   }),
 
+  connectMe: publicProcedure
+    .input(TrackerSchema)
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.insert(trackers).values({
+        monitoredById: "N/A",
+        ...input,
+      });
+    }),
+
   create: protectedProcedure
     .input(TrackerSchema)
     .mutation(async ({ ctx, input }) => {
