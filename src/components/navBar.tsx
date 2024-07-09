@@ -93,6 +93,13 @@ const NavBar = () => {
           >
             History
           </Link>
+
+          <Link
+            href="/tracker/speed-control"
+            className="text-foreground transition-colors hover:text-foreground"
+          >
+            Speed Control
+          </Link>
           <Dialog>
             <DialogTrigger asChild>
               <Button
