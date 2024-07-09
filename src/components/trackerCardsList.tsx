@@ -14,7 +14,7 @@ import { MapPin } from "lucide-react";
 import LocationInformation from "@/components/locationInformation";
 
 const TrackerCardList = () => {
-  const { data: trackers } = api.tracker.getAll.useQuery();
+  const { data: trackers } = api.tracker.getAllDistinct.useQuery();
   const utils = api.useUtils();
   const { mutate: deleteTrackerMutation } = api.tracker.delete.useMutation({
     onSuccess: async () => {

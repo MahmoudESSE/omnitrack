@@ -86,6 +86,13 @@ const NavBar = () => {
           >
             Trackers
           </Link>
+
+          <Link
+            href="/tracker/history"
+            className="text-foreground transition-colors hover:text-foreground"
+          >
+            History
+          </Link>
           <Dialog>
             <DialogTrigger asChild>
               <Button

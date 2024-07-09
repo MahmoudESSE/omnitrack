@@ -8,7 +8,7 @@ import {
 
 import { groups, trackers } from "@/server/db/schema";
 import { TrackerSchema } from "@/server/helpers/trackerValidator";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { throws } from "assert";
 import { TRPCError } from "@trpc/server";
 
@@ -77,6 +77,7 @@ export const trackerRouter = createTRPCRouter({
       });
     }),
 
+
   update: protectedProcedure
     .input(
       TrackerSchema.merge(
@@ -129,6 +130,32 @@ export const trackerRouter = createTRPCRouter({
       where: (trackers, { eq }) =>
         eq(trackers.monitoredById, monitoredBy.groupId),
     });
+  }),
+
+  getAllDistinct: protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.session.user || !ctx.session.user.email) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "user email not found",
+      });
+    }
+
+    const member_email = ctx.session.user.email;
+
+    const monitoredBy = await ctx.db.query.members.findFirst({
+      where: (members, { eq }) => eq(members.member_email, member_email),
+    });
+
+    if (!monitoredBy) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "default user group not found",
+      });
+    }
+
+    return await ctx.db.selectDistinctOn([trackers.name]).from(trackers)
+      .where((t) => eq(t.monitoredById, monitoredBy.groupId));
+
   }),
 
   getLatest: protectedProcedure.query(({ ctx }) => {

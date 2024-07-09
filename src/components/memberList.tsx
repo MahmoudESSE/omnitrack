@@ -2,11 +2,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { api } from "@/utils/api";
 import { useSession } from "next-auth/react";
+import { Button } from "./ui/button";
 
 const MemberList = () => {
   const { data: sessionData, status: sessionStatus } = useSession();
 
   const { data: groupMembers, status } = api.group.getAll.useQuery();
+
+  const utils = api.useUtils();
+
+  const { mutate: deleteMemberMutation } = api.group.delete.useMutation({
+    onSuccess: async () => {
+      await utils.group.getAll.invalidate();
+    },
+  });
 
   if (status === "error" || status === "pending") {
     return <></>;
@@ -15,6 +24,12 @@ const MemberList = () => {
   if (sessionStatus === "unauthenticated" || !sessionData?.user) {
     return <></>;
   }
+
+  function deleteMember(member_email: string) {
+    console.log("Deleted: " + member_email);
+    deleteMemberMutation({ member_email: member_email });
+  }
+
 
   return (
     <Card>
@@ -29,6 +44,13 @@ const MemberList = () => {
                 {groupMember.member_email}
               </p>
             </div>
+
+            <Button
+              variant="destructive"
+              onClick={() => deleteMember(groupMember.member_email)}
+            >
+              Supprimer
+            </Button>
           </div>
         ))}
       </CardContent>

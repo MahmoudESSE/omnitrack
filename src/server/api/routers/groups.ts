@@ -78,4 +78,14 @@ export const groupsRouter = createTRPCRouter({
       .from(members)
       .where((m) => eq(m.groupId, res.id));
   }),
+
+  delete: protectedProcedure
+    .input(
+      z.object({
+        member_email: z.string().email(),
+      }),
+    )
+    .mutation(async ({ ctx, input: { member_email } }) => {
+      await ctx.db.delete(members).where(eq(members.member_email, member_email));
+    }),
 });
