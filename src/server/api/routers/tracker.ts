@@ -104,8 +104,31 @@ export const trackerRouter = createTRPCRouter({
       await ctx.db.delete(trackers).where(eq(trackers.id, id));
     }),
 
-  getAll: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.select().from(trackers);
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.session.user || !ctx.session.user.email) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "user email not found",
+      });
+    }
+
+    const member_email = ctx.session.user.email;
+
+    const monitoredBy = await ctx.db.query.members.findFirst({
+      where: (members, { eq }) => eq(members.member_email, member_email),
+    });
+
+    if (!monitoredBy) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "default user group not found",
+      });
+    }
+
+    return await ctx.db.query.trackers.findMany({
+      where: (trackers, { eq }) =>
+        eq(trackers.monitoredById, monitoredBy.groupId),
+    });
   }),
 
   getLatest: protectedProcedure.query(({ ctx }) => {

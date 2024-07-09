@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import LoginForm from "@/components/loginForm";
 import Analytics from "@segment/analytics-node";
 import { api } from "@/utils/api";
+import FrontPage from "@/components/frontPage";
 
 const Home = () => {
   const { data: sessionData, status } = useSession();
@@ -33,7 +34,7 @@ const Home = () => {
           <link rel="icon" href="/inbox_tray/favicon.ico" />
         </Head>
         <div className="flex min-h-screen w-full flex-col">
-          <LoginForm />
+          <FrontPage />
         </div>
       </>
     );
@@ -55,7 +56,7 @@ const Home = () => {
       url: "https://omnitrack.dinopp.site",
       path: "/",
       title: "Tracker Page",
-    }
+    },
   });
 
   return (
