@@ -1,3 +1,4 @@
+import { group } from "console";
 import { relations, sql } from "drizzle-orm";
 import {
   index,
@@ -44,9 +45,9 @@ export const trackers = createTable(
   "tracker",
   {
     id: serial("id").primaryKey(),
-    monitoredById: varchar("monitoredById", { length: 255 })
-      .notNull()
-      .references(() => users.id),
+    monitoredById: integer("monitoredById")
+      .references(() => groups.id)
+      .notNull(),
     name: varchar("name", { length: 255 }).notNull().default("N/A"),
     latitude: real("latitude"),
     longtitude: real("longtitude"),
@@ -56,9 +57,9 @@ export const trackers = createTable(
     imei: integer("imei").notNull(),
     speed: real("speed").default(4.0).notNull(),
   },
-  (user) => ({
+  (group) => ({
     trackerMonitoredByIdIdx: index("trackerMonitoredById_idx").on(
-      user.monitoredById,
+      group.monitoredById,
     ),
   }),
 );

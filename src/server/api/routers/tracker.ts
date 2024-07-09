@@ -6,9 +6,11 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 
-import { trackers } from "@/server/db/schema";
+import { groups, trackers } from "@/server/db/schema";
 import { TrackerSchema } from "@/server/helpers/trackerValidator";
 import { eq } from "drizzle-orm";
+import { throws } from "assert";
+import { TRPCError } from "@trpc/server";
 
 export const trackerRouter = createTRPCRouter({
   hello: publicProcedure
@@ -26,8 +28,30 @@ export const trackerRouter = createTRPCRouter({
   connectMe: publicProcedure
     .input(TrackerSchema)
     .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.email, "mahmoudessehayli@gmail.com"),
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "no default user",
+        });
+      }
+
+      const monitoredBy = await ctx.db.query.groups.findFirst({
+        where: (groups, { eq }) => eq(groups.ownerId, user.id),
+      });
+
+      if (!monitoredBy) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "default user group not found",
+        });
+      }
+
       await ctx.db.insert(trackers).values({
-        monitoredById: "N/A",
+        monitoredById: monitoredBy.id,
         ...input,
       });
     }),
@@ -35,8 +59,20 @@ export const trackerRouter = createTRPCRouter({
   create: protectedProcedure
     .input(TrackerSchema)
     .mutation(async ({ ctx, input }) => {
+      const monitoredBy = await ctx.db.query.groups.findFirst({
+        where: (groups, { eq }) => eq(groups.ownerId, ctx.session.user.id),
+      });
+
+      if (!monitoredBy) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "default user group not found",
+        });
+      }
+
       await ctx.db.insert(trackers).values({
-        monitoredById: ctx.session.user.id,
+        monitoredById: monitoredBy.id,
+
         ...input,
       });
     }),
